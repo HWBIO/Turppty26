@@ -95,16 +95,15 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                 <span>交楼时间</span>
                 <span>报价范围</span>
               </div>
-              {catalog.projects.map((project, index) => (
+              {catalog.projects.map((project) => (
                 <article key={project.id} className="ledger-row">
                   <div>
                     <button type="button" className="name-link" onClick={() => setOpenId(project.id)}>
                       {project.name}
                     </button>
-                    <p className="mt-1 text-xs text-muted">
-                      {String(index + 1).padStart(2, "0")}
-                      {project.supplyLabel ? ` · ${project.supplyLabel}` : ""}
-                    </p>
+                    {project.supplyLabel ? (
+                      <p className="mt-1 text-xs text-muted">{project.supplyLabel}</p>
+                    ) : null}
                   </div>
                   <div>
                     <div>{project.district || "—"}</div>
