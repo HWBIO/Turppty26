@@ -42,7 +42,9 @@ export type Project = RawProject & {
   districtZh: string;
   latNum: number | null;
   lngNum: number | null;
-  coordFrom: "sheet" | "street" | "none";
+  coordFrom: "sheet" | "street" | "geocode" | "none";
+  image?: { src: string; caption: string };
+  briefZh: string;
   check?: PublicCheck;
 };
 

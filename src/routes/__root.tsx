@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "土耳其投资置业";
+const APP_NAME = "土耳其探险之旅";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -13,7 +13,7 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       {
         name: "description",
-        content: "给投资移民客户看的土耳其房产项目名单，列表与地图可切换。",
+        content: "土耳其探险之旅的项目名单，列表与地图可切换。",
       },
       { name: "theme-color", content: "#1f4d45" },
     ],

@@ -1,11 +1,22 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
+import { ProjectDetail } from "@/components/projects/project-detail";
 import { ProjectDrawer } from "@/components/projects/project-drawer";
 import type { Catalog, Project } from "@/lib/projects/types";
 
 const ProjectMap = lazy(() => import("@/components/projects/project-map"));
 
 type View = "list" | "map";
+
+function TripNote() {
+  return (
+    <p className="view-note">
+      本次探险项目几乎都在 Istanbul「二环」内（指北到 E80 高速，南至 15 国道，西至 O7 快速路，东至 O4 快速路这一带）。
+      <br />
+      项目关注点：价格、品牌、出租单价、周边客群画像、持有成本等。
+    </p>
+  );
+}
 
 function priceText(project: Project): string {
   if (project.price) return project.price;
@@ -15,6 +26,7 @@ function priceText(project: Project): string {
 export function ProjectBoard({ catalog }: { catalog: Catalog }) {
   const [view, setView] = useState<View>("list");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [mapId, setMapId] = useState<string | null>(null);
   const [renderedId, setRenderedId] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -39,6 +51,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
   }, [visible]);
 
   const openProject = catalog.projects.find((project) => project.id === renderedId) ?? null;
+  const mapProject = catalog.projects.find((project) => project.id === mapId) ?? null;
   const placed = catalog.projects.filter((project) => project.latNum !== null).length;
 
   return (
@@ -46,7 +59,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
       <header className="masthead">
         <div>
           <div className="wordmark">Turppty</div>
-          <div className="font-serif text-lg font-semibold leading-tight">土耳其投资置业</div>
+          <div className="font-serif text-lg font-semibold leading-tight">土耳其探险之旅</div>
         </div>
         <p className="hidden text-sm text-muted lg:block">
           {catalog.projects.length} 个项目
@@ -66,7 +79,10 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
             type="button"
             className="press"
             aria-pressed={view === "map"}
-            onClick={() => setView("map")}
+            onClick={() => {
+              setOpenId(null);
+              setView("map");
+            }}
           >
             地图
           </button>
@@ -81,9 +97,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
 
       {view === "list" ? (
         <main className="ledger">
-          <p className="mb-6 max-w-2xl text-sm leading-7 text-muted">
-            给投资移民客户看的项目备选。点项目名称看详情。交楼和报价如果表格没填，不会用中介数字顶上。
-          </p>
+          <TripNote />
           {catalog.projects.length === 0 ? (
             <p className="border-t border-line py-10 text-muted">表格里还没有项目名称。</p>
           ) : (
@@ -95,39 +109,61 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                 <span>交楼时间</span>
                 <span>报价范围</span>
               </div>
-              {catalog.projects.map((project) => (
-                <article key={project.id} className="ledger-row">
-                  <div>
-                    <button type="button" className="name-link" onClick={() => setOpenId(project.id)}>
-                      {project.name}
-                    </button>
-                    {project.supplyLabel ? (
-                      <p className="mt-1 text-xs text-muted">{project.supplyLabel}</p>
-                    ) : null}
-                  </div>
-                  <div>
-                    <div>{project.district || "—"}</div>
-                    {project.districtZh ? <div className="text-xs text-muted">{project.districtZh}</div> : null}
-                  </div>
-                  <div className="text-sm">{project.developer || "—"}</div>
-                  <div className={project.handover ? "text-sm" : "text-sm text-muted"}>
-                    {project.handover || "待确认"}
-                  </div>
-                  <div className={project.price ? "text-sm" : "text-sm text-muted"}>{priceText(project)}</div>
-                </article>
-              ))}
+              {catalog.projects.map((project, index) => {
+                const next = catalog.projects[index + 1];
+                const split =
+                  project.name === "REFERANS BEYLİKDÜZÜ" && next?.name === "Bakırcı Zenit Topkapı";
+                return (
+                  <Fragment key={project.id}>
+                    <article className="ledger-row">
+                      <div>
+                        <button type="button" className="name-link" onClick={() => setOpenId(project.id)}>
+                          {project.name}
+                        </button>
+                        {project.supplyLabel ? (
+                          <p className="mt-1 text-xs text-muted">{project.supplyLabel}</p>
+                        ) : null}
+                      </div>
+                      <div>
+                        <div>{project.district || "—"}</div>
+                        {project.districtZh ? <div className="text-xs text-muted">{project.districtZh}</div> : null}
+                      </div>
+                      <div className="text-sm">{project.developer || "—"}</div>
+                      <div className={project.handover ? "text-sm" : "text-sm text-muted"}>
+                        {project.handover || "待确认"}
+                      </div>
+                      <div className={project.price ? "text-sm" : "text-sm text-muted"}>{priceText(project)}</div>
+                    </article>
+                    {split ? <div className="ledger-split" /> : null}
+                  </Fragment>
+                );
+              })}
             </>
           )}
         </main>
       ) : (
-        <ClientOnly fallback={<div className="map-stage grid place-items-center text-sm text-muted">地图加载中</div>}>
-          <Suspense fallback={<div className="map-stage grid place-items-center text-sm text-muted">地图加载中</div>}>
-            <ProjectMap projects={catalog.projects} onOpen={setOpenId} />
-          </Suspense>
-        </ClientOnly>
+        <div className="map-view">
+          <div className="ledger !pb-0">
+            <TripNote />
+          </div>
+          <ClientOnly fallback={<div className="map-stage grid place-items-center text-sm text-muted">地图加载中</div>}>
+            <Suspense fallback={<div className="map-stage grid place-items-center text-sm text-muted">地图加载中</div>}>
+              <ProjectMap projects={catalog.projects} selectedId={mapId} onOpen={setMapId} />
+            </Suspense>
+          </ClientOnly>
+          <section className="map-detail" aria-live="polite">
+            {mapProject ? (
+              <ProjectDetail project={mapProject} layout="columns" />
+            ) : (
+              <p className="map-detail-empty">点击地图上的项目名称，在这里看详情。</p>
+            )}
+          </section>
+        </div>
       )}
 
-      <ProjectDrawer project={openProject} visible={visible && openProject !== null} onClose={() => setOpenId(null)} />
+      {view === "list" ? (
+        <ProjectDrawer project={openProject} visible={visible && openProject !== null} onClose={() => setOpenId(null)} />
+      ) : null}
     </div>
   );
 }

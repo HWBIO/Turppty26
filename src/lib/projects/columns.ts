@@ -30,7 +30,7 @@ const ALIASES: Record<Field, string[]> = {
   name: ["项目名称", "property name", "name", "项目名"],
   website: ["项目官网", "website", "官网", "url"],
   developer: ["开发商", "developer"],
-  handover: ["交楼时间", "handover", "delivery", "交楼"],
+  handover: ["交楼时间", "handover", "delivery", "deliver time", "delivertime", "交楼"],
   address: ["地址", "address"],
   district: ["所在城区", "district", "城区", "区域"],
   price: ["报价范围", "price", "报价", "价格"],
