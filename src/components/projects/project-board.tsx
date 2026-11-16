@@ -64,7 +64,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
         <p className="hidden text-sm text-muted lg:block">
           {catalog.projects.length} 个项目
           {view === "map" ? ` · ${placed} 个已上图` : ""}
-          {catalog.sheetOk ? " · 名单读取自表格" : " · 表格暂时读不到"}
+          {catalog.sheetOk ? "" : " · 表格暂时读不到"}
         </p>
         <div className="view-switch" role="group" aria-label="视图">
           <button
