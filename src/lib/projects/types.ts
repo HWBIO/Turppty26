@@ -13,6 +13,8 @@ export type RawProject = {
   reviews: string;
   city: string;
   note: string;
+  /** Raw 「图源」 cell. May hold one or more page or image URLs. */
+  imageSource: string;
 };
 
 export type CheckItem = {
@@ -36,14 +38,20 @@ export type PublicCheck = {
   items: CheckItem[];
 };
 
+export type ProjectImage = { src: string; caption: string };
+
 export type Project = RawProject & {
   id: string;
   supplyLabel: string;
   districtZh: string;
   latNum: number | null;
   lngNum: number | null;
-  coordFrom: "sheet" | "street" | "geocode" | "none";
-  image?: { src: string; caption: string };
+  coordFrom: "sheet" | "address" | "geocode" | "listing" | "name" | "none";
+  images: ProjectImage[];
+  imageTotal: number;
+  imageFrom: "sheet" | "curated" | "none";
+  /** First image, kept for callers that only need a cover. */
+  image?: ProjectImage;
   briefZh: string;
   check?: PublicCheck;
 };

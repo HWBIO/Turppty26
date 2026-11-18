@@ -1,0 +1,81 @@
+/** Local copies of images fetched from the sheet's 图源 column. Keyed by the page URL without a hash. */
+export type ImageManifestEntry = {
+  total: number;
+  caption: string;
+  files: string[];
+};
+
+export const IMAGE_MANIFEST: Record<string, ImageManifestEntry> = {
+  "https://tekce.com/ad/ist-01782-spacious-apartments-in-a-secure-complex-in-zeytinburnu-istanbul": {
+    total: 27,
+    caption: "图片来自表格「图源」所链的页面。",
+    files: [
+      "/project-photos/luxera-topkapi/01.jpg",
+      "/project-photos/luxera-topkapi/02.jpg",
+      "/project-photos/luxera-topkapi/03.jpg",
+      "/project-photos/luxera-topkapi/04.jpg",
+      "/project-photos/luxera-topkapi/05.jpg",
+      "/project-photos/luxera-topkapi/06.jpg",
+      "/project-photos/luxera-topkapi/07.jpg",
+      "/project-photos/luxera-topkapi/08.jpg",
+      "/project-photos/luxera-topkapi/09.jpg",
+      "/project-photos/luxera-topkapi/10.jpg",
+      "/project-photos/luxera-topkapi/11.jpg",
+      "/project-photos/luxera-topkapi/12.jpg",
+      "/project-photos/luxera-topkapi/13.jpg",
+      "/project-photos/luxera-topkapi/14.jpg",
+      "/project-photos/luxera-topkapi/15.jpg",
+      "/project-photos/luxera-topkapi/16.jpg",
+      "/project-photos/luxera-topkapi/17.jpg",
+      "/project-photos/luxera-topkapi/18.jpg",
+      "/project-photos/luxera-topkapi/19.jpg",
+      "/project-photos/luxera-topkapi/20.jpg",
+    ],
+  },
+  "https://tekce.com/ad/ist-00374-high-rise-spacious-apartments-in-istanbul-sisli": {
+    total: 31,
+    caption: "图片来自表格「图源」所链的页面。",
+    files: [
+      "/project-photos/bomonti-rotana/01.jpg",
+      "/project-photos/bomonti-rotana/02.jpg",
+      "/project-photos/bomonti-rotana/03.jpg",
+      "/project-photos/bomonti-rotana/04.jpg",
+      "/project-photos/bomonti-rotana/05.jpg",
+      "/project-photos/bomonti-rotana/06.jpg",
+      "/project-photos/bomonti-rotana/07.jpg",
+      "/project-photos/bomonti-rotana/08.jpg",
+      "/project-photos/bomonti-rotana/09.jpg",
+      "/project-photos/bomonti-rotana/10.jpg",
+      "/project-photos/bomonti-rotana/11.jpg",
+      "/project-photos/bomonti-rotana/12.jpg",
+      "/project-photos/bomonti-rotana/13.jpg",
+      "/project-photos/bomonti-rotana/14.jpg",
+      "/project-photos/bomonti-rotana/15.jpg",
+      "/project-photos/bomonti-rotana/16.jpg",
+      "/project-photos/bomonti-rotana/17.jpg",
+      "/project-photos/bomonti-rotana/18.jpg",
+      "/project-photos/bomonti-rotana/19.jpg",
+      "/project-photos/bomonti-rotana/20.jpg",
+    ],
+  },
+  "https://tekce.com/ad/ist-01655-prime-location-ready-to-move-in-renovated-building-in-fatih": {
+    total: 14,
+    caption: "图片来自表格「图源」所链的页面。",
+    files: [
+      "/project-photos/fatih-5-studio/01.jpg",
+      "/project-photos/fatih-5-studio/02.jpg",
+      "/project-photos/fatih-5-studio/03.jpg",
+      "/project-photos/fatih-5-studio/04.jpg",
+      "/project-photos/fatih-5-studio/05.jpg",
+      "/project-photos/fatih-5-studio/06.jpg",
+      "/project-photos/fatih-5-studio/07.jpg",
+      "/project-photos/fatih-5-studio/08.jpg",
+      "/project-photos/fatih-5-studio/09.jpg",
+      "/project-photos/fatih-5-studio/10.jpg",
+      "/project-photos/fatih-5-studio/11.jpg",
+      "/project-photos/fatih-5-studio/12.jpg",
+      "/project-photos/fatih-5-studio/13.jpg",
+      "/project-photos/fatih-5-studio/14.jpg",
+    ],
+  },
+};

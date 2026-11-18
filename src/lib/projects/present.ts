@@ -1,28 +1,8 @@
-import type { Project, PublicCheck, RawProject } from "./types";
-import { briefInChinese } from "./brief-zh";
-
-const STREET_LAT = 41.0090637;
-const STREET_LNG = 28.9063465;
-
-const PLACED: Record<string, [number, number]> = {
-  "bakirci kaya residence": [STREET_LAT, STREET_LNG],
-  "avrupa residence tem": [41.089142, 28.8974079],
-  "maslak koru": [41.111636, 28.9887436],
-  "eliteworldresidence": [41.0957905, 28.9891303],
-  "avrupa konutlari sisli 2": [41.072051, 29.0000664],
-  "avrupa konutlari sisli1": [41.0668318, 29.000724],
-  "taksim 360": [41.0363842, 28.9787337],
-  "lania residence": [41.0550204, 28.8288506],
-  "avrupa konutlari gunesli": [41.0398306, 28.8349724],
-  "hayat city mahmutbey": [41.0531706, 28.8298667],
-  "referans beylikduzu": [40.9884187, 28.669736],
-  "bakirci zenit topkapi": [41.0252818, 28.9087881],
-  "avangart istanbul": [41.0962725, 28.9820172],
-  "anthill residence": [41.0566417, 28.9768273],
-  "nurol life": [41.1052428, 28.9921366],
-  "luxera topkapi": [41.0206171, 28.9034623],
-  "rams park house maslak": [41.1337016, 29.0248402],
-};
+import type { Project, ProjectImage, PublicCheck, RawProject } from "./types.ts";
+import { briefInChinese } from "./brief-zh.ts";
+import { fold, nameKeys } from "./address.ts";
+import { directGallery, galleryFromManifest, splitSourceUrls } from "./gallery.ts";
+import { coordinateFromAddress, coordinateFromName } from "./place.ts";
 
 const PHOTOS: Record<string, { src: string; caption: string }> = {
   "bakirci kaya residence": {
@@ -98,16 +78,6 @@ const PHOTOS: Record<string, { src: string; caption: string }> = {
 const DISTRICT_ZH: Record<string, string> = {
   zeytinburnu: "泽伊廷布尔努",
 };
-
-function fold(value: string): string {
-  return value
-    .replaceAll("İ", "i")
-    .replaceAll("I", "i")
-    .replaceAll("ı", "i")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "");
-}
 
 function slug(name: string): string {
   const folded = fold(name).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -193,6 +163,14 @@ const KAYA_CHECK: PublicCheck = {
   ],
 };
 
+function curatedPhoto(name: string): ProjectImage | undefined {
+  for (const key of nameKeys(name)) {
+    const photo = PHOTOS[key];
+    if (photo) return photo;
+  }
+  return undefined;
+}
+
 export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
   let id = slug(raw.name);
   if (usedIds.has(id)) {
@@ -206,9 +184,31 @@ export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
   const sheetLng = coord(raw.lng, -180, 180);
   const kaya = isKaya(raw.name);
   const hasSheetCoord = sheetLat !== null && sheetLng !== null;
-  const placed = PLACED[fold(raw.name)];
-  const latNum = hasSheetCoord ? sheetLat : placed ? placed[0] : null;
-  const lngNum = hasSheetCoord ? sheetLng : placed ? placed[1] : null;
+  const fromAddress = coordinateFromAddress(raw.address);
+  const fromName = coordinateFromName(raw.name);
+  const latNum = hasSheetCoord ? sheetLat : (fromAddress?.lat ?? fromName?.lat ?? null);
+  const lngNum = hasSheetCoord ? sheetLng : (fromAddress?.lng ?? fromName?.lng ?? null);
+  const coordFrom = hasSheetCoord ? "sheet" : fromAddress ? "address" : fromName ? "name" : "none";
+
+  const manifest = galleryFromManifest(raw.imageSource);
+  const direct = directGallery(raw.imageSource);
+  const curated = curatedPhoto(raw.name);
+  let images: ProjectImage[] = [];
+  let imageTotal = 0;
+  let imageFrom: Project["imageFrom"] = "none";
+  if (manifest) {
+    images = manifest.files.map((src) => ({ src, caption: manifest.caption }));
+    imageTotal = manifest.total;
+    imageFrom = "sheet";
+  } else if (direct) {
+    images = direct.map((src) => ({ src, caption: "图片来自表格「图源」。" }));
+    imageTotal = splitSourceUrls(raw.imageSource).length;
+    imageFrom = "sheet";
+  } else if (curated) {
+    images = [curated];
+    imageTotal = 1;
+    imageFrom = "curated";
+  }
 
   const districtKey = fold(raw.district);
   return {
@@ -218,8 +218,11 @@ export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
     districtZh: DISTRICT_ZH[districtKey] ?? "",
     latNum,
     lngNum,
-    coordFrom: hasSheetCoord ? "sheet" : latNum !== null ? "geocode" : "none",
-    image: PHOTOS[fold(raw.name)],
+    coordFrom,
+    images,
+    imageTotal,
+    imageFrom,
+    image: images[0],
     briefZh: briefInChinese(raw.brief),
     check: kaya ? KAYA_CHECK : undefined,
   };
