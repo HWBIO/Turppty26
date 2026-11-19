@@ -23,12 +23,22 @@ function priceText(project: Project): string {
   return project.check ? "官网未标价" : "未填写";
 }
 
-/** One price per line. Semicolons, including the full-width form, separate entries. */
-function priceLines(project: Project): string[] {
-  return priceText(project)
+/** One entry per line. Semicolons, including the full-width form, separate entries. */
+function entryLines(value: string): string[] {
+  return value
     .split(/[;；]/)
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function LedgerEntries({ lines, muted, className }: { lines: string[]; muted?: boolean; className?: string }) {
+  return (
+    <div className={["ledger-entries", muted ? "text-muted" : "", className].filter(Boolean).join(" ")}>
+      {lines.map((line, index) => (
+        <div key={index}>{line}</div>
+      ))}
+    </div>
+  );
 }
 
 /** Sheet District is the Turkish name, with the Chinese name on a second line when filled. */
@@ -169,14 +179,12 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                       <div className={project.handover ? "text-sm" : "text-sm text-muted"}>
                         {project.handover || "待确认"}
                       </div>
-                      <div className={project.price ? "text-[0.625rem]" : "text-[0.625rem] text-muted"}>
-                        {priceLines(project).map((line, index) => (
-                          <div key={index}>{line}</div>
-                        ))}
-                      </div>
-                      <div className={project.leaseLabel === "N.A" ? "ledger-lease text-sm text-muted" : "ledger-lease text-sm"}>
-                        {project.leaseLabel}
-                      </div>
+                      <LedgerEntries lines={entryLines(priceText(project))} muted={!project.price} />
+                      <LedgerEntries
+                        className="ledger-lease"
+                        lines={entryLines(project.leaseLabel)}
+                        muted={project.leaseLabel === "N.A"}
+                      />
                       <div className="ledger-review">
                         {project.userReviews.length > 0 ? (
                           <>
