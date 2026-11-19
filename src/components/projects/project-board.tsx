@@ -137,8 +137,8 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                         ) : null}
                       </div>
                       <div>
-                        <div className="text-base">{district.tr || "—"}</div>
-                        {district.zh ? <div className="text-xs text-muted">{district.zh}</div> : null}
+                        <div className="text-xs">{district.tr || "—"}</div>
+                        {district.zh ? <div className="text-[0.5rem] text-muted">{district.zh}</div> : null}
                       </div>
                       <div className="text-sm">{project.developer || "—"}</div>
                       <div className={project.handover ? "text-sm" : "text-sm text-muted"}>
