@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { ImageBanner } from "@/components/projects/image-banner";
+import { splitSourceUrls } from "@/lib/projects/gallery";
 import type { Project } from "@/lib/projects/types";
 
 function Field({ label, value, pending }: { label: string; value: string; pending?: boolean }) {
@@ -11,12 +12,6 @@ function Field({ label, value, pending }: { label: string; value: string; pendin
 }
 
 export function ProjectDetail({ project, layout }: { project: Project; layout: "stack" | "columns" }) {
-  const [imageOk, setImageOk] = useState(true);
-
-  useEffect(() => {
-    setImageOk(true);
-  }, [project.id]);
-
   const check = project.check;
   const handoverPending = !project.handover;
   const pricePending = !project.price;
@@ -32,20 +27,7 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
     </div>
   );
 
-  const photo = project.image ?? check?.image;
-  const image =
-    photo && imageOk ? (
-      <figure className="mt-6">
-        <img
-          src={photo.src}
-          alt={`${project.name} 项目图片`}
-          className="project-photo"
-          referrerPolicy="no-referrer"
-          onError={() => setImageOk(false)}
-        />
-        <figcaption className="mt-2 text-xs text-muted">{photo.caption}</figcaption>
-      </figure>
-    ) : null;
+  const image = <ImageBanner images={project.images} total={project.imageTotal} name={project.name} />;
 
   const facts = (
     <div className="fact-grid mt-8 border-t border-line pt-6">
@@ -72,6 +54,24 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
       项目官网
     </a>
   ) : null;
+
+  const sourceUrls = splitSourceUrls(project.imageSource);
+  const sources =
+    sourceUrls.length > 0 ? (
+      <div className="mt-2 flex flex-col gap-1">
+        {sourceUrls.map((url, index) => (
+          <a
+            key={url}
+            className="inline-block text-sm text-accent underline decoration-1 underline-offset-4"
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {sourceUrls.length > 1 ? `图源 ${index + 1}` : "图源"}
+          </a>
+        ))}
+      </div>
+    ) : null;
 
   const narrative = (
     <>
@@ -128,9 +128,11 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
         </>
       ) : (
         <p className="text-sm leading-7 text-muted">
-          {project.image
-            ? "图下来源已核对。交楼时间和报价没有用中介数字补上，仍以表格为准。"
-            : "这个项目还没有找到可展示的公开图片，字段栏只显示表格里的内容。"}
+          {project.imageFrom === "sheet"
+            ? "图片来自表格「图源」。交楼时间和报价没有另补，仍以表格为准。"
+            : project.imageFrom === "curated"
+              ? "图下来源已核对。交楼时间和报价没有用中介数字补上，仍以表格为准。"
+              : "这个项目还没有找到可展示的公开图片，字段栏只显示表格里的内容。"}
         </p>
       )}
 
@@ -165,6 +167,7 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
           {image}
           {facts}
           {website}
+          {sources}
         </div>
         <div>{narrative}</div>
       </div>
@@ -177,6 +180,7 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
       {image}
       {facts}
       {website}
+      {sources}
       <div className="mt-10">{narrative}</div>
     </div>
   );
