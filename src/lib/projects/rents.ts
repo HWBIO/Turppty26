@@ -16,12 +16,34 @@ export type ProjectRent = {
   listings: RentListing[];
 };
 
+/** 100 TRY = 1.95 USD, so USD = TRY × 0.0195, rounded to a whole dollar. */
+const TRY_TO_USD = 0.0195;
+
 /**
  * Monthly asking rents scraped 2026-11-19.
  * Sahibinden returned HTTP 403. Hepsiemlak stopped on a Cloudflare check.
- * Figures are Emlakjet asking rents in TRY. Where a room type has several
- * listings, label uses the median. 1 USD = 51.282 TRY was not needed.
+ * `amountTry` and `label` stay in Turkish lira. The page shows `leaseUsdLabel`.
+ * Where a room type has several listings, the TRY median is converted once.
  */
+function usdFromTry(amountTry: number): number {
+  return Math.round(amountTry * TRY_TO_USD);
+}
+
+function formatUsd(amount: number): string {
+  return `$${amount.toLocaleString("en-US")}`;
+}
+
+function roomOrder(rooms: string): number {
+  const head = Number(rooms.split("+")[0]);
+  return Number.isFinite(head) ? head : 99;
+}
+
+function median(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 1) return sorted[mid];
+  return (sorted[mid - 1] + sorted[mid]) / 2;
+}
 const FOUND: { name: string; rent: ProjectRent }[] = [
   {
     name: "Avrupa Residence TEM",
@@ -287,4 +309,20 @@ export function rentFor(name: string): ProjectRent {
     if (hit) return hit;
   }
   return NA;
+}
+
+/** "1+1, $1,073; 2+1, $1,950" or "N.A". */
+export function leaseUsdLabel(name: string): string {
+  const rent = rentFor(name);
+  if (!rent.listings.length) return "N.A";
+  const groups = new Map<string, number[]>();
+  for (const listing of rent.listings) {
+    const amounts = groups.get(listing.rooms) ?? [];
+    amounts.push(listing.amountTry);
+    groups.set(listing.rooms, amounts);
+  }
+  return [...groups.entries()]
+    .sort((a, b) => roomOrder(a[0]) - roomOrder(b[0]) || a[0].localeCompare(b[0]))
+    .map(([rooms, amounts]) => `${rooms}, ${formatUsd(usdFromTry(median(amounts)))}`)
+    .join("; ");
 }

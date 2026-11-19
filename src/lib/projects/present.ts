@@ -3,7 +3,7 @@ import { briefInChinese } from "./brief-zh.ts";
 import { fold, nameKeys } from "./address.ts";
 import { directGallery, galleryFromManifest, splitSourceUrls } from "./gallery.ts";
 import { coordinateFromAddress, coordinateFromName } from "./place.ts";
-import { rentFor } from "./rents.ts";
+import { leaseUsdLabel } from "./rents.ts";
 
 const PHOTOS: Record<string, { src: string; caption: string }> = {
   "bakirci kaya residence": {
@@ -224,7 +224,7 @@ export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
     imageTotal,
     imageFrom,
     image: images[0],
-    leaseLabel: rentFor(raw.name).label,
+    leaseLabel: leaseUsdLabel(raw.name),
     briefZh: briefInChinese(raw.brief),
     check: kaya ? KAYA_CHECK : undefined,
   };
