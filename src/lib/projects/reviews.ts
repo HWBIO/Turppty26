@@ -39,10 +39,18 @@ const REVIEWS: Record<string, ProjectReview[]> = {
   ],
 };
 
+const SENTIMENT_ORDER: Record<ProjectReview["sentiment"], number> = {
+  negative: 0,
+  neutral: 1,
+  positive: 2,
+};
+
 export function reviewsFor(name: string): ProjectReview[] {
   for (const key of nameKeys(name)) {
     const found = REVIEWS[key];
-    if (found?.length) return found;
+    if (found?.length) {
+      return [...found].sort((a, b) => SENTIMENT_ORDER[a.sentiment] - SENTIMENT_ORDER[b.sentiment]);
+    }
   }
   return [];
 }

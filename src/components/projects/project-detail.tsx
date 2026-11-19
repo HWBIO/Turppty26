@@ -29,7 +29,7 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
         {project.district ? ` · ${project.district}` : ""}
         {project.districtZh ? ` ${project.districtZh}` : ""}
       </p>
-      <h2 className="mt-2 font-serif text-3xl font-semibold leading-tight">{project.name}</h2>
+      <h2 className="mt-2 font-serif text-xl font-semibold leading-tight">{project.name}</h2>
     </div>
   );
 
@@ -172,6 +172,7 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
               <article key={`${review.url}-${review.date}-${review.sentiment}`}>
                 <p className="text-xs tracking-widest text-muted">
                   {SENTIMENT[review.sentiment]}
+                  {review.rating ? ` · ${review.rating}` : ""}
                   {review.date ? ` · ${review.date}` : ""}
                 </p>
                 <p className="review-body mt-2 whitespace-pre-wrap">{review.original}</p>

@@ -49,6 +49,8 @@ export type ProjectReview = {
   source: string;
   url: string;
   date: string;
+  /** Reviewer score when the source shows one, such as "2/5". */
+  rating?: string;
   original: string;
   translation: string;
 };
