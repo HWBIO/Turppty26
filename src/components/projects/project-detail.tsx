@@ -1,6 +1,12 @@
 import { ImageBanner } from "@/components/projects/image-banner";
 import { splitSourceUrls } from "@/lib/projects/gallery";
-import type { Project } from "@/lib/projects/types";
+import type { Project, ReviewSentiment } from "@/lib/projects/types";
+
+const SENTIMENT: Record<ReviewSentiment, string> = {
+  negative: "差评",
+  neutral: "中评",
+  positive: "好评",
+};
 
 function Field({ label, value, pending }: { label: string; value: string; pending?: boolean }) {
   return (
@@ -157,6 +163,32 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
       ) : null}
 
       {project.note ? <p className="mt-6 text-sm text-muted">备注：{project.note}</p> : null}
+
+      {project.userReviews.length > 0 ? (
+        <section id="reviews" className="mt-10 border-t border-line pt-6">
+          <h3 className="font-serif text-xl font-semibold">用户评价</h3>
+          <div className="mt-4 flex flex-col gap-6">
+            {project.userReviews.map((review) => (
+              <article key={`${review.url}-${review.date}-${review.sentiment}`}>
+                <p className="text-xs tracking-widest text-muted">
+                  {SENTIMENT[review.sentiment]}
+                  {review.date ? ` · ${review.date}` : ""}
+                </p>
+                <p className="review-body mt-2 whitespace-pre-wrap">{review.original}</p>
+                <p className="review-body mt-2 whitespace-pre-wrap text-muted">{review.translation}</p>
+                <a
+                  className="review-body mt-2 inline-block text-accent underline underline-offset-4"
+                  href={review.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {review.source}
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <p className="mt-10 border-t border-line pt-4 text-xs leading-6 text-muted">
         本页供客户浏览项目信息，不构成投资、购房或入籍的法律意见。报价和交楼时间以表格及开发商书面文件为准。

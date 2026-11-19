@@ -36,6 +36,7 @@ function districtLines(project: Project): { tr: string; zh: string } {
 export function ProjectBoard({ catalog }: { catalog: Catalog }) {
   const [view, setView] = useState<View>("list");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [focusReviews, setFocusReviews] = useState(false);
   const [mapId, setMapId] = useState<string | null>(null);
   const [renderedId, setRenderedId] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -50,6 +51,14 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
     const timer = window.setTimeout(() => setRenderedId(null), 280);
     return () => window.clearTimeout(timer);
   }, [openId]);
+
+  useEffect(() => {
+    if (!visible || !focusReviews) return;
+    const timer = window.setTimeout(() => {
+      document.getElementById("reviews")?.scrollIntoView({ block: "start" });
+    }, 320);
+    return () => window.clearTimeout(timer);
+  }, [visible, focusReviews, renderedId]);
 
   useEffect(() => {
     if (!visible) return;
@@ -119,6 +128,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                 <span>交楼时间</span>
                 <span>报价范围</span>
                 <span>Lease/m</span>
+                <span>Review</span>
               </div>
               {catalog.projects.map((project, index) => {
                 const next = catalog.projects[index + 1];
@@ -129,7 +139,14 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                   <Fragment key={project.id}>
                     <article className="ledger-row">
                       <div>
-                        <button type="button" className="name-link" onClick={() => setOpenId(project.id)}>
+                        <button
+                          type="button"
+                          className="name-link"
+                          onClick={() => {
+                            setFocusReviews(false);
+                            setOpenId(project.id);
+                          }}
+                        >
                           {project.name}
                         </button>
                         {project.supplyLabel ? (
@@ -147,6 +164,23 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                       <div className={project.price ? "text-sm" : "text-sm text-muted"}>{priceText(project)}</div>
                       <div className={project.leaseLabel === "N.A" ? "ledger-lease text-sm text-muted" : "ledger-lease text-sm"}>
                         {project.leaseLabel}
+                      </div>
+                      <div className="ledger-review">
+                        {project.userReviews.length > 0 ? (
+                          <>
+                            <span className="review-label">Review</span>
+                            <button
+                              type="button"
+                              className="press"
+                              onClick={() => {
+                                setFocusReviews(true);
+                                setOpenId(project.id);
+                              }}
+                            >
+                              有
+                            </button>
+                          </>
+                        ) : null}
                       </div>
                     </article>
                     {split ? <div className="ledger-split" /> : null}

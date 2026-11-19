@@ -42,6 +42,17 @@ export type PublicCheck = {
 
 export type ProjectImage = { src: string; caption: string };
 
+export type ReviewSentiment = "negative" | "neutral" | "positive";
+
+export type ProjectReview = {
+  sentiment: ReviewSentiment;
+  source: string;
+  url: string;
+  date: string;
+  original: string;
+  translation: string;
+};
+
 export type Project = RawProject & {
   id: string;
   supplyLabel: string;
@@ -57,6 +68,8 @@ export type Project = RawProject & {
   /** First image, kept for callers that only need a cover. */
   image?: ProjectImage;
   briefZh: string;
+  /** Collected reviews. Empty when none could be verified for this exact project. */
+  userReviews: ProjectReview[];
   check?: PublicCheck;
 };
 

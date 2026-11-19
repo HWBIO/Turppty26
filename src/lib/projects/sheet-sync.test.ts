@@ -86,13 +86,15 @@ describe("sheet sync", () => {
     assert.ok(luxera && bomonti && studio && kaya);
     assert.equal(luxera.imageFrom, "sheet");
     assert.equal(luxera.images.length, MAX_GALLERY);
-    assert.equal(luxera.imageTotal, 27);
+    assert.equal(luxera.imageTotal, MAX_GALLERY);
+    assert.match(luxera.images[0]?.caption ?? "", /效果图/);
     assert.equal(bomonti.images.length, 20);
-    assert.equal(bomonti.imageTotal, 31);
+    assert.equal(bomonti.imageFrom, "sheet");
     assert.equal(studio.images.length, 14);
     assert.equal(studio.imageTotal, 14);
     assert.equal(kaya.imageFrom, "curated");
-    assert.equal(kaya.images.length, 1);
+    assert.ok(kaya.images.length > 1);
+    assert.match(kaya.images[0]?.src ?? "", /bakirci-kaya/);
     for (const project of [luxera, bomonti, studio]) {
       for (const image of project.images) {
         assert.equal(fs.existsSync(path.join(process.cwd(), "public", image.src)), true, image.src);
@@ -110,6 +112,12 @@ describe("sheet sync", () => {
     };
     const project = presentProject(raw, new Set());
     assert.equal(project.images.length, 20);
+    const anthill = projects.find((item) => item.name === "Anthill Residence");
+    assert.ok(anthill);
+    assert.ok(anthill.userReviews.some((review) => review.sentiment === "negative" && review.original && review.translation));
+    const sisli1 = projects.find((item) => item.name.includes("Şişli1"));
+    assert.ok(sisli1);
+    assert.ok(sisli1.images.every((image) => !image.src.includes("sisli-2")));
   });
 
   it("reads galleries and listing coordinates out of a page", () => {

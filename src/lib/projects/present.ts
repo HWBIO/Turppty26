@@ -2,8 +2,10 @@ import type { Project, ProjectImage, PublicCheck, RawProject } from "./types.ts"
 import { briefInChinese } from "./brief-zh.ts";
 import { fold, nameKeys } from "./address.ts";
 import { directGallery, galleryFromManifest, splitSourceUrls } from "./gallery.ts";
+import { localGallery } from "./galleries.ts";
 import { coordinateFromAddress, coordinateFromName } from "./place.ts";
 import { leaseUsdLabel } from "./rents.ts";
+import { reviewsFor } from "./reviews.ts";
 
 const PHOTOS: Record<string, { src: string; caption: string }> = {
   "bakirci kaya residence": {
@@ -207,13 +209,18 @@ export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
   const lngNum = hasSheetCoord ? sheetLng : (fromAddress?.lng ?? fromName?.lng ?? null);
   const coordFrom = hasSheetCoord ? "sheet" : fromAddress ? "address" : fromName ? "name" : "none";
 
+  const local = localGallery(raw.name);
   const manifest = galleryFromManifest(raw.imageSource);
   const direct = directGallery(raw.imageSource);
   const curated = curatedPhoto(raw.name);
   let images: ProjectImage[] = [];
   let imageTotal = 0;
   let imageFrom: Project["imageFrom"] = "none";
-  if (manifest) {
+  if (local) {
+    images = local.shots.map((shot) => ({ src: shot.src, caption: shot.caption }));
+    imageTotal = local.shots.length;
+    imageFrom = local.imageFrom;
+  } else if (manifest) {
     images = manifest.files.map((src) => ({ src, caption: manifest.caption }));
     imageTotal = manifest.total;
     imageFrom = "sheet";
@@ -242,6 +249,7 @@ export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
     image: images[0],
     leaseLabel: raw.leaseSheet.trim() || leaseUsdLabel(raw.name),
     briefZh: briefInChinese(raw.brief),
+    userReviews: reviewsFor(raw.name),
     check: kaya ? KAYA_CHECK : undefined,
   };
 }
