@@ -33,11 +33,16 @@ export function ProjectDetail({ project, layout }: { project: Project; layout: "
     <div className="fact-grid mt-8 border-t border-line pt-6">
       <Field label="开发商" value={project.developer} />
       <Field label="交楼时间" value={project.handover || "待确认"} pending={handoverPending} />
-      <Field
-        label="报价范围"
-        value={project.price || (check ? "官网未标价" : "未填写")}
-        pending={pricePending}
-      />
+      <div>
+        <Field
+          label="报价范围"
+          value={project.price || (check ? "官网未标价" : "未填写")}
+          pending={pricePending}
+        />
+        <div className="mt-4">
+          <Field label="Lease/m" value={project.leaseLabel} pending={project.leaseLabel === "N.A"} />
+        </div>
+      </div>
       <Field label="供应规模" value={project.supplyLabel || project.supply} />
       <Field label="地址" value={project.address} />
       <Field label="所在城区" value={[project.district, project.districtZh].filter(Boolean).join(" · ")} />

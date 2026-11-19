@@ -50,6 +50,8 @@ export type Project = RawProject & {
   images: ProjectImage[];
   imageTotal: number;
   imageFrom: "sheet" | "curated" | "none";
+  /** Monthly asking rent, or "N.A" when no matching listing was found. */
+  leaseLabel: string;
   /** First image, kept for callers that only need a cover. */
   image?: ProjectImage;
   briefZh: string;

@@ -108,6 +108,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                 <span>开发商</span>
                 <span>交楼时间</span>
                 <span>报价范围</span>
+                <span>Lease/m</span>
               </div>
               {catalog.projects.map((project, index) => {
                 const next = catalog.projects[index + 1];
@@ -133,6 +134,9 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                         {project.handover || "待确认"}
                       </div>
                       <div className={project.price ? "text-sm" : "text-sm text-muted"}>{priceText(project)}</div>
+                      <div className={project.leaseLabel === "N.A" ? "ledger-lease text-sm text-muted" : "ledger-lease text-sm"}>
+                        {project.leaseLabel}
+                      </div>
                     </article>
                     {split ? <div className="ledger-split" /> : null}
                   </Fragment>
