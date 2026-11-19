@@ -224,7 +224,7 @@ export function presentProject(raw: RawProject, usedIds: Set<string>): Project {
     imageTotal,
     imageFrom,
     image: images[0],
-    leaseLabel: leaseUsdLabel(raw.name),
+    leaseLabel: raw.leaseSheet.trim() || leaseUsdLabel(raw.name),
     briefZh: briefInChinese(raw.brief),
     check: kaya ? KAYA_CHECK : undefined,
   };

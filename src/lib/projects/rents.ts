@@ -26,7 +26,11 @@ const TRY_TO_USD = 0.0195;
  * Where a room type has several listings, the TRY median is converted once.
  */
 function usdFromTry(amountTry: number): number {
-  return Math.round(amountTry * TRY_TO_USD);
+  // TRY × 195 / 10000, half up, so 0.5 dollars becomes the next whole dollar.
+  const scaled = Math.round(amountTry) * 195;
+  const whole = Math.trunc(scaled / 10000);
+  const remainder = Math.abs(scaled % 10000);
+  return remainder >= 5000 ? whole + (scaled < 0 ? -1 : 1) : whole;
 }
 
 function formatUsd(amount: number): string {

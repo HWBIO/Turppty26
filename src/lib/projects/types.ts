@@ -15,6 +15,8 @@ export type RawProject = {
   note: string;
   /** Raw 「图源」 cell. May hold one or more page or image URLs. */
   imageSource: string;
+  /** Raw Tenant/m cell. Shown as Lease/m when non-empty. */
+  leaseSheet: string;
 };
 
 export type CheckItem = {

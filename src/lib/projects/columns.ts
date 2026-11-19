@@ -5,7 +5,7 @@ import { parseCsv } from "./csv.ts";
  * Staff header row. The live sheet may still use the old English headers;
  * both are accepted until the sheet is rewritten.
  *
- * 项目名称,项目官网,开发商,交楼时间,地址,所在城区,报价范围,纬度,经度,供应规模,项目简介,用户评价,城市,数据备注,图源
+ * 项目名称,项目官网,开发商,交楼时间,地址,所在城区,报价范围,纬度,经度,供应规模,项目简介,用户评价,城市,数据备注,图源,Tenant/m
  */
 const FIELDS = [
   "name",
@@ -23,6 +23,7 @@ const FIELDS = [
   "city",
   "note",
   "imageSource",
+  "leaseSheet",
 ] as const;
 
 type Field = (typeof FIELDS)[number];
@@ -43,6 +44,7 @@ const ALIASES: Record<Field, string[]> = {
   city: ["城市", "city"],
   note: ["数据备注", "备注", "note"],
   imageSource: ["图源", "图片", "image source", "image url", "images", "图源链接"],
+  leaseSheet: ["tenant/m", "tenant", "lease/m", "lease", "租金", "月租"],
 };
 
 function normHeader(value: string): string {
@@ -87,6 +89,7 @@ export function projectsFromCsv(text: string): RawProject[] {
       city: pick("city"),
       note: pick("note"),
       imageSource: pick("imageSource"),
+      leaseSheet: pick("leaseSheet"),
     });
   }
   return projects;

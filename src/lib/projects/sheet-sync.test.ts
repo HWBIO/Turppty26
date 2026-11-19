@@ -26,6 +26,7 @@ function blank(): RawProject {
     city: "",
     note: "",
     imageSource: "",
+    leaseSheet: "",
   };
 }
 
@@ -59,6 +60,16 @@ describe("sheet sync", () => {
     assert.equal(project.coordFrom, "sheet");
     assert.equal(project.latNum, 41.2);
     assert.equal(project.lngNum, 29.1);
+  });
+
+  it("lets a filled Tenant/m cell replace the stored lease", () => {
+    const project = presentProject(
+      { ...blank(), name: "Avrupa Residence TEM", leaseSheet: "1+1, $9" },
+      new Set(),
+    );
+    assert.equal(project.leaseLabel, "1+1, $9");
+    const fallback = presentProject({ ...blank(), name: "Avrupa Residence TEM", leaseSheet: "  " }, new Set());
+    assert.equal(fallback.leaseLabel, "1+1, $1,073");
   });
 
   it("does not invent a pin for an unknown address", () => {
