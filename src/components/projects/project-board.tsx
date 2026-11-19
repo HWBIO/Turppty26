@@ -23,6 +23,14 @@ function priceText(project: Project): string {
   return project.check ? "官网未标价" : "未填写";
 }
 
+/** One price per line. Semicolons, including the full-width form, separate entries. */
+function priceLines(project: Project): string[] {
+  return priceText(project)
+    .split(/[;；]/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 /** Sheet District is the Turkish name, with the Chinese name on a second line when filled. */
 function districtLines(project: Project): { tr: string; zh: string } {
   const parts = project.district
@@ -161,7 +169,11 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                       <div className={project.handover ? "text-sm" : "text-sm text-muted"}>
                         {project.handover || "待确认"}
                       </div>
-                      <div className={project.price ? "text-sm" : "text-sm text-muted"}>{priceText(project)}</div>
+                      <div className={project.price ? "text-[0.625rem]" : "text-[0.625rem] text-muted"}>
+                        {priceLines(project).map((line, index) => (
+                          <div key={index}>{line}</div>
+                        ))}
+                      </div>
                       <div className={project.leaseLabel === "N.A" ? "ledger-lease text-sm text-muted" : "ledger-lease text-sm"}>
                         {project.leaseLabel}
                       </div>
