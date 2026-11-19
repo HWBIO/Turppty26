@@ -97,12 +97,12 @@ export function ImageBanner({
             <button type="button" className="banner-nav banner-next press" aria-label="下一张" onClick={() => step(1)}>
               ›
             </button>
-            <div className="banner-count">
-              {safeIndex + 1} / {count}
-            </div>
           </>
         ) : null}
       </div>
+      <p className="banner-count" aria-live="polite">
+        {safeIndex + 1}/{count}
+      </p>
       {many ? (
         <div className="banner-strip" role="tablist" aria-label="选择图片">
           {images.map((image, item) => (
