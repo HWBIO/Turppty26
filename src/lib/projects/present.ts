@@ -78,6 +78,22 @@ const PHOTOS: Record<string, { src: string; caption: string }> = {
 
 const DISTRICT_ZH: Record<string, string> = {
   zeytinburnu: "泽伊廷布尔努",
+  gaziosmanpasa: "加济奥斯曼帕夏",
+  sariyer: "萨勒耶尔",
+  kagithane: "卡厄特哈内",
+  sisli: "希什利",
+  beyoglu: "贝伊奥卢",
+  bagcilar: "巴格吉拉尔",
+  beylikduzu: "贝伊利克杜聚",
+  fatih: "法蒂赫",
+  ferikoy: "费里柯伊",
+  bomonti: "博蒙蒂",
+  merkez: "中心",
+  "koca mustafapasa": "科贾穆斯塔法帕夏",
+  "kagithane / sariyer": "卡厄特哈内 / 萨勒耶尔",
+  "sisli ferikoy": "希什利 费里柯伊",
+  "sisli bomonti/merkez": "希什利 博蒙蒂 / 中心",
+  "fatih koca mustafapasa": "法蒂赫 科贾穆斯塔法帕夏",
 };
 
 function slug(name: string): string {

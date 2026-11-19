@@ -23,6 +23,16 @@ function priceText(project: Project): string {
   return project.check ? "官网未标价" : "未填写";
 }
 
+/** Sheet District is the Turkish name, with the Chinese name on a second line when filled. */
+function districtLines(project: Project): { tr: string; zh: string } {
+  const parts = project.district
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (parts.length >= 2) return { tr: parts[0], zh: parts.slice(1).join(" ") };
+  return { tr: parts[0] ?? "", zh: project.districtZh };
+}
+
 export function ProjectBoard({ catalog }: { catalog: Catalog }) {
   const [view, setView] = useState<View>("list");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -114,6 +124,7 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                 const next = catalog.projects[index + 1];
                 const split =
                   project.name === "REFERANS BEYLİKDÜZÜ" && next?.name === "Bakırcı Zenit Topkapı";
+                const district = districtLines(project);
                 return (
                   <Fragment key={project.id}>
                     <article className="ledger-row">
@@ -126,8 +137,8 @@ export function ProjectBoard({ catalog }: { catalog: Catalog }) {
                         ) : null}
                       </div>
                       <div>
-                        <div>{project.district || "—"}</div>
-                        {project.districtZh ? <div className="text-xs text-muted">{project.districtZh}</div> : null}
+                        <div className="text-base">{district.tr || "—"}</div>
+                        {district.zh ? <div className="text-xs text-muted">{district.zh}</div> : null}
                       </div>
                       <div className="text-sm">{project.developer || "—"}</div>
                       <div className={project.handover ? "text-sm" : "text-sm text-muted"}>
