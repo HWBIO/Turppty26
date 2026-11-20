@@ -263,6 +263,16 @@ export const PROJECT_GALLERIES: Record<string, NamedGallery> = {
       { src: "/project-photos/mega-garden/09.jpg", kind: "other", caption: "项目图片，取自该项目页面。" },
     ],
   },
+  "imperium no1 residence": {
+    imageFrom: "curated",
+    shots: [
+      { src: "/project-photos/imperium-no1/01.jpg", kind: "other", caption: "项目图片，取自该项目页面。" },
+      { src: "/project-photos/imperium-no1/02.jpg", kind: "other", caption: "项目图片，取自该项目页面。" },
+      { src: "/project-photos/imperium-no1/03.jpg", kind: "other", caption: "项目图片，取自该项目页面。" },
+      { src: "/project-photos/imperium-no1/04.jpg", kind: "other", caption: "项目图片，取自该项目页面。" },
+      { src: "/project-photos/imperium-no1/05.jpg", kind: "other", caption: "项目图片，取自该项目页面。" },
+    ],
+  },
 };
 
 export function localGallery(name: string): NamedGallery | undefined {
